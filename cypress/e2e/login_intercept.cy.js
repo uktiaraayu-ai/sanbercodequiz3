@@ -1,6 +1,6 @@
 describe('OrangeHRM Login Feature with Intercept', () => {
 
-  beforeEach(() => {
+  beforeEach(() => { 
     cy.visit('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');
 
     cy.get('input[name="username"]', { timeout: 10000 })

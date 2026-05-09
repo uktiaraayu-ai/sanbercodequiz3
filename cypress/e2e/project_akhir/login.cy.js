@@ -9,16 +9,12 @@ describe('OrangeHRM Login Feature', () => {
   });
 
   it('User berhasil login dengan credential valid', () => {
-    cy.intercept('POST', '**/auth/validate').as('loginRequest');
-
-    loginPage.login('Admin', 'admin123');
-
-    cy.wait('@loginRequest');
+    loginPage.loginWithIntercept('Admin', 'admin123').its('response.statusCode').should('be.oneOf', [200, 302]);
     cy.url().should('include', '/dashboard');
   });
 
   it('User gagal login dengan password salah', () => {
-    loginPage.login('Admin', 'wrongpassword');
+    loginPage.loginWithIntercept('Admin', 'wrongpassword').its('response.statusCode').should('be.oneOf', [200, 302]);
 
     loginPage.errorMessage().should('contain', 'Invalid credentials');
   });
@@ -35,6 +31,15 @@ describe('OrangeHRM Login Feature', () => {
     loginPage.loginButton().click();
 
     cy.contains('Required').should('be.visible');
+  });
+
+  it('Link Forgot your password tampil di bawah button Login', () => {
+    loginPage.forgotPasswordLink().should('be.visible');
+    loginPage.loginButton().then(($button) => {
+      loginPage.forgotPasswordLink().then(($link) => {
+        expect($link.offset().top).to.be.greaterThan($button.offset().top);
+      });
+    });
   });
 
 });
